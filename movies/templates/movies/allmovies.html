@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang='es'>
+    <head>
+        <meta charset="UTF-8">
+        <title>Lista de Peliculas</title>
+    </head>
+    <body>
+
+        <h1>Lista de Peliculas</h1>
+
+        {% if objetos %}
+         <ul>
+             {% for obj in objetos %}
+                <li>
+                    <a href = "\movies\{{obj.id}}">
+                    <b>{{ obj.title }}</b>
+                    </a>
+                </li>
+                {% endfor %}
+         </ul>
+         {% else %}
+         <p>No hay objetos disponibles.</p>
+         {% endif %}
+    </body>
+</html>
+
