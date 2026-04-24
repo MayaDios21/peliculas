@@ -17,8 +17,8 @@
                         px-1 
                         pt-1 text-sm font-medium text-blue-900">My Movies</a>
         {% if user.is_authenticated %}
-          <a href="/collections" class="inline-flex items-center border-b-2 
-                        {% if request.path == '/collections/' %}
+          <a href="/movies/my-favorites/" class="relative inline-flex items-center border-b-2 
+                        {% if request.path == '/movies/my-favorites/' %}
                         border-sky-600 
                         {% else %} 
                         border-transparent
@@ -26,14 +26,23 @@
 
                         px-1
                         pt-1 text-sm font-medium text-gray-500 hover:border-gray-300
-                        hover:text-gray-700">Mis Peliculas</a>
+                        hover:text-gray-700">
+            Mis Películas
+            <div hx-trigger="favoritesUpdated from:body"
+                 hx-get="/movies/favorite/count/"
+                 hx-target="this"
+                 hx-swap="innerHTML"
+                 class="ml-2">
+              {% include "movies/favorite_badge.html" with favorite_count=request.user.favorites.count %}
+            </div>
+          </a>
 
         {% endif %}
         </div>
       </div>
       <div class="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end">
         <div class="w-full max-w-lg lg:max-w-xs">
-        <form method="get" action="/artworks/search" class="mb-3">
+        <form method="get" action="/movies/search/" class="mb-3">
           <label for="search" class="sr-only">Buscar</label>
           <div class="relative">
             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">

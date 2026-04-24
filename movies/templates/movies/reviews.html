@@ -1,17 +1,27 @@
 {% load static %}
 
-{% for review in movie.moviereview_set.all %} 
+{% for review in movie.reviews.all %} 
 
 <article class="flex max-w-xl flex-col items-start justify-between 	pt-4 pb-6">
           <div class="flex items-center gap-x-4 text-xs">
             <span class="relative z-10 rounded-full 
-            {% if review.rating < 60 %}
+            {% if review.rating < 3 %}
             bg-red-50 
+            {% elif review.rating < 4 %}
+            bg-yellow-50
             {% else %}
             bg-green-50
             {% endif %}
             px-3 py-1.5 
-            font-semibold text-base	 text-gray-900 ">{{review.rating}}</span>
+            font-semibold text-base	 text-gray-900 ">★ {{review.rating}}/5</span>
+            {% if user.is_authenticated and review.user == user %}
+            <div class="flex gap-2">
+              <button hx-get="/movies/movie_review/add/{{movie.id}}/" hx-target="body" hx-swap="beforeend" 
+                      class="text-xs text-blue-600 hover:text-blue-800">Editar</button>
+              <button hx-post="/movies/review/delete/{{review.id}}/" hx-confirm="¿Eliminar esta reseña?"
+                      class="text-xs text-red-600 hover:text-red-800">Eliminar</button>
+            </div>
+            {% endif %}
           </div>
           <div class="group relative">
             <h3 class="mt-2 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600">
@@ -30,12 +40,12 @@
             <img src="{% static 'movies/knightley.jpg' %}" alt="" class="size-12 rounded-full bg-gray-50">
             <div class="text-sm/6">
               <p class="font-semibold text-gray-900">
-                <a href="#">
+                <a href="{% url 'user_reviews' review.user.id %}">
                   <span class="absolute inset-0"></span>
                   {{review.user}}
                 </a>
               </p>
-              <p class="text-gray-600">Usuario desde: {{review.user.date_joined|date:"M Y"}}</p>
+              <p class="text-gray-600">{{review.fecha_creacion|date:"d M Y H:i"}}</p>
             </div>
           </div>
 </article> 

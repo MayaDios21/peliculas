@@ -1,0 +1,49 @@
+{% extends "movies/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-5 py-8 lg:px-32">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Películas Favoritas de {{ user_profile.username }}</h1>
+    
+    {% if favorites %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for favorite in favorites %}
+            <div class="overflow-hidden rounded-lg bg-white shadow hover:shadow-lg transition">
+                <div class="relative">
+                    <img class="h-64 w-full object-cover"
+                         src="https://image.tmdb.org/t/p/w500/{{ favorite.movie.poster_path }}" 
+                         alt="{{ favorite.movie.title }}" />
+                    <div class="absolute inset-0 bg-black/0 hover:bg-black/20 transition"></div>
+                </div>
+                
+                <div class="p-4">
+                    <h3 class="font-semibold text-gray-900 truncate">
+                        <a href="{% url 'movie' favorite.movie.id %}" class="hover:text-blue-600">
+                            {{ favorite.movie.title }}
+                        </a>
+                    </h3>
+                    <p class="text-sm text-gray-600 mt-1">
+                        {{ favorite.movie.release_date|date:"Y" }}
+                    </p>
+                    <p class="text-sm text-gray-700 mt-2 line-clamp-2">
+                        {{ favorite.movie.overview }}
+                    </p>
+                    <p class="text-xs text-gray-500 mt-3">
+                        Agregado: {{ favorite.fecha_agregado|date:"d M Y" }}
+                    </p>
+                    
+                    {% if request.user == user_profile %}
+                    <button hx-post="/movies/favorite/remove/{{ favorite.movie.id }}/" hx-confirm="¿Remover de favoritos?"
+                            class="mt-4 w-full rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white hover:bg-red-700">
+                        ★ Remover de favoritos
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-gray-600 text-center py-12">Este usuario no tiene películas favoritas todavía</p>
+    {% endif %}
+</div>
+{% endblock content %}

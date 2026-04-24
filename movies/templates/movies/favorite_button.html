@@ -1,0 +1,20 @@
+<div id="favorite-btn">
+  {% if user.is_authenticated %}
+    {% if is_favorite %}
+      <form hx-post="/movies/favorite/remove/{{ movie.id }}/" hx-swap="outerHTML" hx-target="#favorite-btn">
+        {% csrf_token %}
+        <button type="submit" class="pl-5 text-red-600 text-sm hover:text-red-800">★ Quitar de favoritos</button>
+      </form>
+    {% else %}
+      <form hx-post="/movies/favorite/add/{{ movie.id }}/" hx-swap="outerHTML" hx-target="#favorite-btn">
+        {% csrf_token %}
+        <button type="submit" class="pl-5 text-gray-600 text-sm hover:text-red-600">☆ Agregar a favoritos</button>
+      </form>
+    {% endif %}
+  {% else %}
+    <p class="pl-5 text-gray-500 text-sm">
+      <a href="/admin/login" class="text-blue-600 hover:underline">Inicia sesión</a> para agregar favoritos
+    </p>
+  {% endif %}
+</div>
+

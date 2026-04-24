@@ -35,16 +35,35 @@
                 {% if user.is_authenticated %}
                 <a class="pl-5 text-blue-600 text-sm"   
                  hx-get="/movies/movie_review/add/{{movie.id}}" hx-target="body" hx-swap="beforeend"  href="#">reviews</a> 
-                 {% endif %}
-                <a class="pl-5 text-red-600 text-sm" href="#">like</a> 
+                {% endif %}
+                <div id="favorite-btn" 
+                     hx-trigger="favorite-updated from:body"
+                     hx-get="/movies/favorite/{% if is_favorite %}remove{% else %}add{% endif %}/{{movie.id}}/"
+                     hx-target="this"
+                     hx-swap="outerHTML">
+                  {% if user.is_authenticated %}
+                    {% if is_favorite %}
+                      <form hx-post="/movies/favorite/remove/{{movie.id}}/" hx-swap="none">
+                        {% csrf_token %}
+                        <button type="submit" class="pl-5 text-red-600 text-sm">★ Quitar de favoritos</button>
+                      </form>
+                    {% else %}
+                      <form hx-post="/movies/favorite/add/{{movie.id}}/" hx-swap="none">
+                        {% csrf_token %}
+                        <button type="submit" class="pl-5 text-gray-600 text-sm hover:text-red-600">☆ Agregar a favoritos</button>
+                      </form>
+                    {% endif %}
+                  {% endif %}
+                </div>
               </div> 
             
             <h1 class="mt-5 text-gray-600 text-base  pl-5 font-semibold">Overview</h1>
             <p class="mt-2 pl-5 text-gray-500 text-sm font-normal font-sans">{{ movie.overview }}</p>
-            <p class="mt-5 text-gray-600 text-sm  pl-5 font-semibold"> Credits:
+            <p class="mt-5 text-gray-600 text-sm  pl-5 font-semibold"> Actores:
                <p class="mt-2 pl-5 text-gray-600 text-sm  font-thin">
               {% for c in movie.credits.all %} 
-              {{c}} {% if not forloop.last %} - {% endif %}
+              <a href="{% url 'person_detail' c.id %}" class="text-blue-600 hover:underline">{{c}}</a>
+              {% if not forloop.last %} - {% endif %}
               {%endfor%}  
               </p> 
            <p class="block overflow-hidden mt-6 mb-3

@@ -11,30 +11,38 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-import environ
 import os
 
-env = environ.Env(
-    # set casting, default value
-    DEBUG=(bool, True)
-)
+try:
+    import environ
+except ModuleNotFoundError:
+    environ = None
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+if environ is not None:
+    env = environ.Env(
+        # set casting, default value
+        DEBUG=(bool, True)
+    )
+    environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+else:
+    env = None
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY') 
+if env is not None:
+    SECRET_KEY = env('SECRET_KEY', default='django-insecure-dev-only-key')
+else:
+    SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-dev-only-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['100.51.182.45']
-print(ALLOWED_HOSTS)
 
 
 # Application definition
@@ -90,7 +98,7 @@ DATABASES = {
         "NAME": "django",
         "USER": "ubuntu",
         "PASSWORD": "",
-        "HOST": "/tmp",
+        "HOST": "localhost",
         "PORT": "5432",
     }
 }
@@ -134,7 +142,6 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
-    '/home/ubuntu/ProgWeb/Tutoriales/css'
 ]
 
 # Default primary key field type

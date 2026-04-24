@@ -1,0 +1,63 @@
+{% extends "movies/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-5 py-8 lg:px-32">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">
+        {% if search_value %}
+            Resultados para: "{{ search_value }}"
+        {% else %}
+            Búsqueda de películas
+        {% endif %}
+    </h1>
+    
+    {% if movies %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for movie in movies %}
+            <div class="overflow-hidden rounded-lg bg-white shadow hover:shadow-lg transition">
+                <div class="relative">
+                    <a href="{% url 'movie' movie.id %}">
+                        <img class="h-64 w-full object-cover"
+                             src="https://image.tmdb.org/t/p/w500/{{ movie.poster_path }}" 
+                             alt="{{ movie.title }}" />
+                        <div class="absolute inset-0 bg-black/0 hover:bg-black/20 transition"></div>
+                    </a>
+                </div>
+                
+                <div class="p-4">
+                    <h3 class="font-semibold text-gray-900 truncate">
+                        <a href="{% url 'movie' movie.id %}" class="hover:text-blue-600">
+                            {{ movie.title }}
+                        </a>
+                    </h3>
+                    <p class="text-sm text-gray-600 mt-1">
+                        {{ movie.release_date|date:"Y" }}
+                    </p>
+                    <p class="text-sm text-gray-700 mt-2 line-clamp-2">
+                        {{ movie.overview }}
+                    </p>
+                    {% if movie.genres.all %}
+                    <p class="text-xs text-gray-500 mt-2">
+                        {% for genre in movie.genres.all %}
+                            <span class="inline-block bg-gray-200 rounded px-2 py-1 mr-1">{{ genre.name }}</span>
+                        {% endfor %}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-12">
+            <p class="text-gray-600 mb-4">
+                {% if search_value %}
+                    No se encontraron películas con "{{ search_value }}"
+                {% else %}
+                    Ingresa un término de búsqueda para encontrar películas
+                {% endif %}
+            </p>
+            <a href="/" class="text-blue-600 hover:underline">Volver al inicio</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}
